@@ -4,18 +4,28 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Positive;
 
+//Represents exchange of money
 @Entity
 public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Positive(message = "Amount should be greater than zero")
+    @Max(value = 10000)
     private int amount;
+
     @Enumerated(EnumType.STRING)
     private TransactionType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id")
+    @JsonIgnore
+    private Wallet wallet;
 
     public Transaction() {
     }
@@ -24,11 +34,6 @@ public class Transaction {
         this.amount = amount;
         this.type = type;
     }
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wallet_id")
-    @JsonIgnore
-    private Wallet wallet;
 
     public void setWallet(Wallet wallet) {
         this.wallet = wallet;
