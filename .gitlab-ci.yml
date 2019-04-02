@@ -7,3 +7,14 @@ build:
   artifacts:
     reports:
       junit: build/test-results/test/TEST-*.xml
+
+prod-deploy:
+  stage: deploy
+  image: ruby:latest
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=enigmatic-tor-53046 --api-key=4ba51f53-441f-4c18-baeb-14991ea785e6
+  only:
+    - master
