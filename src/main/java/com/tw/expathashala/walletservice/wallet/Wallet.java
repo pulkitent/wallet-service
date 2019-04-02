@@ -1,5 +1,6 @@
 package com.tw.expathashala.walletservice.wallet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -21,6 +22,7 @@ public class Wallet {
     private int balance;
 
     @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
+    @JsonIgnore
     public List<Transaction> transaction;
 
     public Wallet() {

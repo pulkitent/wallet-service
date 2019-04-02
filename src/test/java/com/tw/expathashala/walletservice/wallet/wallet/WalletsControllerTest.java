@@ -96,4 +96,17 @@ class WalletsControllerTest {
         verify(walletService).addTransaction(eq(wallet_id),any(Transaction.class));
     }
 
+    @Test
+    void expectsErrorMessageWhenGivenNegativeAmount() throws Exception {
+        Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT);
+        long wallet_id = 999L;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(firstTransaction)))
+                .andExpect(status().isCreated());
+
+        verify(walletService).addTransaction(eq(wallet_id),any(Transaction.class));
+    }
 }

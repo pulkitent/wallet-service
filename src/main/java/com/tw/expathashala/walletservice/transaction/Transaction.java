@@ -1,5 +1,6 @@
 package com.tw.expathashala.walletservice.transaction;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Positive
+    @Positive(message = "Amount should be greater than zero")
     private int amount;
     @Enumerated(EnumType.STRING)
     private TransactionType type;
@@ -26,6 +27,7 @@ public class Transaction {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
+    @JsonIgnore
     private Wallet wallet;
 
     public void setWallet(Wallet wallet) {

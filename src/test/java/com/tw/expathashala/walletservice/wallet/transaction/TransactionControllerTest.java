@@ -39,5 +39,4 @@ class TransactionControllerTest {
 
         verify(walletService).findById(any(Long.class));
     }
-
 }
