@@ -1,0 +1,9 @@
+image: gradle:5.3.0-jdk11
+
+build:
+  stage: build
+  script:
+    - gradle build
+  artifacts:
+    reports:
+      junit: build/test-results/test/TEST-*.xml
