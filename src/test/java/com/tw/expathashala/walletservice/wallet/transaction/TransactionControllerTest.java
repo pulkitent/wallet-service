@@ -1,4 +1,4 @@
-package com.tw.expathashala.walletservice.wallet.moneyTransaction;
+package com.tw.expathashala.walletservice.wallet.transaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.expathashala.walletservice.wallet.Wallet;

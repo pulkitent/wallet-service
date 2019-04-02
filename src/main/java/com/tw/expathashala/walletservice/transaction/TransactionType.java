@@ -1,4 +1,4 @@
-package com.tw.expathashala.walletservice.moneytransaction;
+package com.tw.expathashala.walletservice.transaction;
 
 public enum TransactionType {
     CREDIT(1), DEBIT(-1);

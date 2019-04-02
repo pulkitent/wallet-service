@@ -1,8 +1,8 @@
 package com.tw.expathashala.walletservice.wallet.wallet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tw.expathashala.walletservice.moneytransaction.MoneyTransaction;
-import com.tw.expathashala.walletservice.moneytransaction.TransactionType;
+import com.tw.expathashala.walletservice.transaction.Transaction;
+import com.tw.expathashala.walletservice.transaction.TransactionType;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletService;
 import org.junit.jupiter.api.Test;
@@ -84,7 +84,7 @@ class WalletsControllerTest {
 
     @Test
     void shouldBeAbleToAddTransactionForAGivenWallet() throws Exception {
-        MoneyTransaction firstTransaction = new MoneyTransaction(100, TransactionType.DEBIT);
+        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT);
         long wallet_id = 999L;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -93,7 +93,7 @@ class WalletsControllerTest {
                         .content(objectMapper.writeValueAsString(firstTransaction)))
                         .andExpect(status().isCreated());
 
-        verify(walletService).addTransaction(eq(wallet_id),any(MoneyTransaction.class));
+        verify(walletService).addTransaction(eq(wallet_id),any(Transaction.class));
     }
 
 }

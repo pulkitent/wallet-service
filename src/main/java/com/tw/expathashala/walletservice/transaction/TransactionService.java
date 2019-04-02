@@ -1,4 +1,4 @@
-package com.tw.expathashala.walletservice.moneytransaction;
+package com.tw.expathashala.walletservice.transaction;
 
 public class TransactionService {
     private TransactionRepository transactionRepository;
@@ -7,7 +7,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public MoneyTransaction save(MoneyTransaction transaction) {
+    public Transaction save(Transaction transaction) {
         return transactionRepository.save(transaction);
     }
 }

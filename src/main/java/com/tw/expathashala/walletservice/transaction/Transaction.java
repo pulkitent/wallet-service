@@ -1,23 +1,25 @@
-package com.tw.expathashala.walletservice.moneytransaction;
+package com.tw.expathashala.walletservice.transaction;
 
 import com.tw.expathashala.walletservice.wallet.Wallet;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 
 @Entity
-public class MoneyTransaction {
+public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
-    public int amount;
+    private long id;
+    @Positive
+    private int amount;
     @Enumerated(EnumType.STRING)
-    public TransactionType type;
+    private TransactionType type;
 
-    public MoneyTransaction() {
+    public Transaction() {
     }
 
-    public MoneyTransaction(int amount, TransactionType type) {
+    public Transaction(int amount, TransactionType type) {
         this.amount = amount;
         this.type = type;
     }
