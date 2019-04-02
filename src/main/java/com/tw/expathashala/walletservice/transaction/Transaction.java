@@ -11,11 +11,13 @@ import javax.validation.constraints.Positive;
 @Entity
 public class Transaction {
 
+    public static final String MESSAGE_NEGATIVE_AMOUNT = "Amount should be greater than zero";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Positive(message = "Amount should be greater than zero")
+    @Positive(message = MESSAGE_NEGATIVE_AMOUNT)
     @Max(value = 10000)
     private int amount;
 

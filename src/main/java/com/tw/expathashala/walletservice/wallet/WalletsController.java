@@ -45,11 +45,7 @@ class WalletsController {
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public Map<String, String> handleException(MethodArgumentNotValidException ex){
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
+        errors.put("message", "Unable to add Transaction");
         return errors;
     }
 }

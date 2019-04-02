@@ -13,7 +13,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static com.tw.expathashala.walletservice.transaction.Transaction.MESSAGE_NEGATIVE_AMOUNT;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -99,14 +102,26 @@ class WalletsControllerTest {
     @Test
     void expectsErrorMessageWhenGivenNegativeAmount() throws Exception {
         Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT);
-        long wallet_id = 999L;
+        long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(firstTransaction)))
-                .andExpect(status().isCreated());
+                .andExpect(jsonPath("$.message").value("Unable to add Transaction"));
 
-        verify(walletService).addTransaction(eq(wallet_id),any(Transaction.class));
+    }
+
+    @Test
+    void expectsErrorMessageWhen11000Amount() throws Exception {
+        Transaction firstTransaction = new Transaction(11000, TransactionType.CREDIT);
+        long wallet_id = 1;
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(firstTransaction)))
+                .andExpect(jsonPath("$.message").value("Unable to add Transaction"));
+
     }
 }
