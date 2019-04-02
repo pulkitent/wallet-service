@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +44,9 @@ class WalletsController {
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public Map<String, String> handleException(MethodArgumentNotValidException ex){
+    public Map<String, String> handleException(MethodArgumentNotValidException ex,HttpServletResponse response){
         Map<String, String> errors = new HashMap<>();
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         errors.put("message", "Unable to add Transaction");
         return errors;
     }

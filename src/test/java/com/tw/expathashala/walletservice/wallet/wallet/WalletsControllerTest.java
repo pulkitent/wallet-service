@@ -104,7 +104,7 @@ class WalletsControllerTest {
         Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT);
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
-
+        System.out.println(objectMapper.writeValueAsString(firstTransaction));
         mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(firstTransaction)))

@@ -19,7 +19,7 @@ class WalletTest {
     @Test
     void serializationOfWallet() throws JsonProcessingException {
         Wallet wallet = new Wallet("Alice", 100);
-        String expectedString = "{\"id\":null,\"name\":\"Alice\",\"balance\":100,\"transaction\":[]}";
+        String expectedString = "{\"id\":null,\"name\":\"Alice\",\"balance\":100}";
         ObjectMapper objectMapper = new ObjectMapper();
 
         String walletString = objectMapper.writeValueAsString(wallet);
