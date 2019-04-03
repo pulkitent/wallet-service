@@ -1,6 +1,6 @@
 package com.tw.expathashala.walletservice.wallet;
 
-import com.tw.expathashala.walletservice.moneytransaction.MoneyTransaction;
+import com.tw.expathashala.walletservice.transaction.Transaction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,7 +24,7 @@ class WalletService {
         return walletRepository.findById(walletId);
     }
 
-    public MoneyTransaction addTransaction(Long walletId, MoneyTransaction transaction) {
+    public Transaction addTransaction(Long walletId, Transaction transaction) {
         Wallet wallet = findById(walletId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         wallet.process(transaction);
         save(wallet);
