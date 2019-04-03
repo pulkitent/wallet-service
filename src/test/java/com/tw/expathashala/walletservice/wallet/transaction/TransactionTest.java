@@ -51,3 +51,5 @@ class TransactionTest {
         assertTrue(violations.isEmpty());
     }
 }
+
+// TODO: check violation message

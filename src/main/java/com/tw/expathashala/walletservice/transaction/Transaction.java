@@ -17,6 +17,8 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    // TODO: add messages to validation
+
     @Positive(message = MESSAGE_NEGATIVE_AMOUNT)
     @Max(value = 10000)
     private int amount;

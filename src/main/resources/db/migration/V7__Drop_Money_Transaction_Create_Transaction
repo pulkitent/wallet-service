@@ -1,0 +1,8 @@
+DROP money_transaction;
+CREATE TABLE transaction (
+       id  bigserial not null,
+       wallet_id int8,
+        amount int4 not null,
+        type varchar,
+        primary key (id)
+    );
