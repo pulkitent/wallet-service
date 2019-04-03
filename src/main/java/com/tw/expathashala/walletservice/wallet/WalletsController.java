@@ -35,5 +35,4 @@ class WalletsController {
     MoneyTransaction postTransaction(@PathVariable Long id, @RequestBody MoneyTransaction transaction) {
         return walletService.addTransaction(id, transaction);
     }
-
 }
