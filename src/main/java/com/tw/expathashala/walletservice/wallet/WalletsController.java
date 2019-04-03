@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/wallets")
 @Api(value = "WalletDetails", description = "Operations performed on wallet to return details ")
 class WalletsController {
