@@ -13,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.tw.expathashala.walletservice.transaction.Transaction.MESSAGE_NEGATIVE_AMOUNT;
 import static org.mockito.Mockito.*;
@@ -92,11 +90,11 @@ class WalletsControllerTest {
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(firstTransaction)))
-                        .andExpect(status().isCreated());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(firstTransaction)))
+                .andExpect(status().isCreated());
 
-        verify(walletService).addTransaction(eq(wallet_id),any(Transaction.class));
+        verify(walletService).addTransaction(eq(wallet_id), any(Transaction.class));
     }
 
     @Test
@@ -104,12 +102,11 @@ class WalletsControllerTest {
         Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT);
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
-        System.out.println(objectMapper.writeValueAsString(firstTransaction));
+
         mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(firstTransaction)))
-                .andExpect(jsonPath("$.message").value("Unable to add Transaction"));
-
+                .andExpect(jsonPath("$.amount").value(MESSAGE_NEGATIVE_AMOUNT));
     }
 
     @Test
@@ -121,8 +118,7 @@ class WalletsControllerTest {
         mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(firstTransaction)))
-                .andExpect(jsonPath("$.message").value("Unable to add Transaction"));
-
+                .andExpect(jsonPath("$.amount").value(Transaction.MAX_AMOUNT_ALLOWED_EXCEEDED));
     }
 }
 // TODO: Failed to create transaction

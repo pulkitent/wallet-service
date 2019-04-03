@@ -26,28 +26,36 @@ class TransactionTest {
     @Test
     void expectsAmountViolationWhenGivenNegativeTenAmount() {
         Transaction transaction = new Transaction(-10, TransactionType.CREDIT);
+
         Set<ConstraintViolation<Transaction>> violations = validator.validate(transaction);
+
         assertFalse(violations.isEmpty());
     }
 
     @Test
     void expectsNoViolationWhenGivenPositiveTenAmount() {
         Transaction transaction = new Transaction(10, TransactionType.CREDIT);
+
         Set<ConstraintViolation<Transaction>> violations = validator.validate(transaction);
+
         assertTrue(violations.isEmpty());
     }
 
     @Test
     void expectsAmountViolationWhenGiven11000Amount() {
         Transaction transaction = new Transaction(11000, TransactionType.CREDIT);
+
         Set<ConstraintViolation<Transaction>> violations = validator.validate(transaction);
+
         assertFalse(violations.isEmpty());
     }
 
     @Test
     void expectsNoViolationWhenGiven100Amount() {
         Transaction transaction = new Transaction(100, TransactionType.CREDIT);
+
         Set<ConstraintViolation<Transaction>> violations = validator.validate(transaction);
+
         assertTrue(violations.isEmpty());
     }
 }

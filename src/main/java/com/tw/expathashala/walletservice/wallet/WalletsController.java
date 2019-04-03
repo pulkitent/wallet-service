@@ -43,13 +43,15 @@ class WalletsController {
         return walletService.addTransaction(id, transaction);
     }
 
-    // TODO: construct valid message
-
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public Map<String, String> handleException(MethodArgumentNotValidException ex,HttpServletResponse response){
         Map<String, String> errors = new HashMap<>();
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        errors.put("message", "Unable to add Transaction");
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
         return errors;
     }
 }

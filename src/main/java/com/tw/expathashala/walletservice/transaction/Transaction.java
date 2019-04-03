@@ -12,15 +12,14 @@ import javax.validation.constraints.Positive;
 public class Transaction {
 
     public static final String MESSAGE_NEGATIVE_AMOUNT = "Amount should be greater than zero";
+    public static final String MAX_AMOUNT_ALLOWED_EXCEEDED = "Amount cannot exceed ₹ 10000";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // TODO: add messages to validation
-
     @Positive(message = MESSAGE_NEGATIVE_AMOUNT)
-    @Max(value = 10000)
+    @Max(value = 10000, message = MAX_AMOUNT_ALLOWED_EXCEEDED)
     private int amount;
 
     @Enumerated(EnumType.STRING)
