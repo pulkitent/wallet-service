@@ -7,6 +7,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+      temp:
+        use_jdbc_metadata_defaults: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
