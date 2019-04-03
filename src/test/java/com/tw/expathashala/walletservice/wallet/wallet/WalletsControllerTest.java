@@ -110,15 +110,15 @@ class WalletsControllerTest {
     }
 
     @Test
-    void expectsErrorMessageWhen11000Amount() throws Exception {
-        Transaction firstTransaction = new Transaction(11000, TransactionType.CREDIT);
+    void expectsErrorMessageWhenWhenTransactionAmountExceedsMaxLimit() throws Exception {
+        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT);
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/wallets/" + wallet_id + "/transactions")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(firstTransaction)))
-                .andExpect(jsonPath("$.amount").value(Transaction.MAX_AMOUNT_ALLOWED_EXCEEDED));
+                .content(objectMapper.writeValueAsString(invalidTransaction)))
+                .andExpect(jsonPath("$.amount").value(Transaction.MAX_AMOUNT_ALLOWED_EXCEEDED_MESSAGE));
     }
 }
 // TODO: Failed to create transaction
