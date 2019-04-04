@@ -1,7 +1,7 @@
 package com.tw.expathashala.walletservice.wallet;
 
-import com.tw.expathashala.walletservice.moneytransaction.MoneyTransaction;
-import com.tw.expathashala.walletservice.moneytransaction.TransactionType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tw.expathashala.walletservice.transaction.Transaction;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -21,8 +21,9 @@ public class Wallet {
     private String name;
     private int balance;
 
-    @OneToMany(mappedBy = "wallet",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    public List<MoneyTransaction> moneyTransaction;
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
+    @JsonIgnore
+    public List<Transaction> transaction;
 
     public Wallet() {
     }
@@ -30,7 +31,7 @@ public class Wallet {
     public Wallet(String name, int balance) {
         this.name = name;
         this.balance = balance;
-        this.moneyTransaction = new ArrayList<>();
+        this.transaction = new ArrayList<>();
     }
 
     public String getName() {
@@ -46,8 +47,8 @@ public class Wallet {
     }
 
 
-    public void process(MoneyTransaction transaction) {
-        moneyTransaction.add(transaction);
+    public void process(Transaction transaction) {
+        this.transaction.add(transaction);
         int amountToUpdate = transaction.amountToUpdate();
         updateBalance(amountToUpdate);
         transaction.setWallet(this);

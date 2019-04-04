@@ -1,8 +1,8 @@
 package com.tw.expathashala.walletservice.wallet.wallet;
 
-import com.tw.expathashala.walletservice.moneytransaction.MoneyTransaction;
-import com.tw.expathashala.walletservice.moneytransaction.TransactionRepository;
-import com.tw.expathashala.walletservice.moneytransaction.TransactionType;
+import com.tw.expathashala.walletservice.transaction.Transaction;
+import com.tw.expathashala.walletservice.transaction.TransactionRepository;
+import com.tw.expathashala.walletservice.transaction.TransactionType;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletRepository;
 import com.tw.expathashala.walletservice.wallet.WalletService;
@@ -60,8 +60,8 @@ class WalletServiceTest {
         void addTransactionsLinkedToAWalletOnSaveOfWallet() {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = new Wallet("Ved", 200);
-            MoneyTransaction firstTransaction = new MoneyTransaction(10, TransactionType.CREDIT);
-            MoneyTransaction secondTransaction = new MoneyTransaction(30, TransactionType.DEBIT);
+            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
+            Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT);
             wallet.process(firstTransaction);
             wallet.process(secondTransaction);
 
@@ -74,8 +74,8 @@ class WalletServiceTest {
         void addTransactionsLinkedToAWalletOnSaveOfWalletAndUpdateBalance() {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = new Wallet("Ved", 200);
-            MoneyTransaction firstTransaction = new MoneyTransaction(10, TransactionType.CREDIT);
-            MoneyTransaction secondTransaction = new MoneyTransaction(30, TransactionType.CREDIT);
+            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
+            Transaction secondTransaction = new Transaction(30, TransactionType.CREDIT);
             wallet.process(firstTransaction);
             wallet.process(secondTransaction);
 
@@ -89,7 +89,7 @@ class WalletServiceTest {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = new Wallet("Ved", 200);
             Wallet savedWallet = walletService.save(wallet);
-            MoneyTransaction firstTransaction = new MoneyTransaction(10, TransactionType.CREDIT);
+            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
 
             walletService.addTransaction(savedWallet.getId(),firstTransaction);
 

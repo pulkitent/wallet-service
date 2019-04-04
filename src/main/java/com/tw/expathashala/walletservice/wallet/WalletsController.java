@@ -1,10 +1,18 @@
 package com.tw.expathashala.walletservice.wallet;
 
-import com.tw.expathashala.walletservice.moneytransaction.MoneyTransaction;
+import com.tw.expathashala.walletservice.transaction.Transaction;
 import io.swagger.annotations.Api;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -32,7 +40,19 @@ class WalletsController {
 
     @PostMapping("/{id}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
-    MoneyTransaction postTransaction(@PathVariable Long id, @RequestBody MoneyTransaction transaction) {
+    Transaction createTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
         return walletService.addTransaction(id, transaction);
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public Map<String, String> handleException(MethodArgumentNotValidException ex,HttpServletResponse response){
+        Map<String, String> errors = new HashMap<>();
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }
