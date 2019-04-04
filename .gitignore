@@ -3,6 +3,7 @@ HELP.md
 /build/
 create.sql
 !gradle/wrapper/gradle-wrapper.jar
+classes/
 
 ### STS ###
 .apt_generated
