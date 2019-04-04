@@ -1,6 +1,7 @@
 package com.tw.expathashala.walletservice.wallet;
 
 import com.tw.expathashala.walletservice.transaction.Transaction;
+import com.tw.expathashala.walletservice.transaction.TransactionService;
 import io.swagger.annotations.Api;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,9 +23,11 @@ import java.util.Map;
 class WalletsController {
 
     private WalletService walletService;
+    private TransactionService transactionService;
 
-    WalletsController(WalletService walletService) {
+    WalletsController(WalletService walletService, TransactionService transactionService) {
         this.walletService = walletService;
+        this.transactionService = transactionService;
     }
 
     @PostMapping()
@@ -42,6 +46,12 @@ class WalletsController {
     @ResponseStatus(HttpStatus.CREATED)
     Transaction createTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
         return walletService.addTransaction(id, transaction);
+    }
+
+    @GetMapping("/{id}/transactions")
+    @ResponseStatus(HttpStatus.CREATED)
+    List<Transaction> fetchTransaction(@PathVariable Long id) {
+        return transactionService.fetch(id);
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
