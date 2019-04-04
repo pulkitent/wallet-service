@@ -1,11 +1,9 @@
 HELP.md
 .gradle
 /build/
-gradle/
-gradlew
-gradlew.bat
 create.sql
 !gradle/wrapper/gradle-wrapper.jar
+classes/
 
 ### STS ###
 .apt_generated

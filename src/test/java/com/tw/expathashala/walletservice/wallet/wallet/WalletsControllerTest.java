@@ -18,8 +18,7 @@ import static com.tw.expathashala.walletservice.transaction.Transaction.MESSAGE_
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
@@ -30,6 +29,27 @@ class WalletsControllerTest {
     @MockBean
     private
     WalletService walletService;
+
+    @Test
+    void shouldPassWhenRequestContainsOriginHeader() throws Exception {
+        Wallet wallet = new Wallet("Walter White", 100);
+        when(walletService.findById(any(Long.class))).thenReturn(java.util.Optional.of(wallet));
+
+        mockMvc.perform(get("/wallets/1")
+                .header("Origin", "www.dummyurl.com"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", "*"));
+    }
+
+    @Test
+    void shouldFailWhenRequestDoesNotContainOriginHeader() throws Exception {
+        Wallet wallet = new Wallet("Walter White", 100);
+        when(walletService.findById(any(Long.class))).thenReturn(java.util.Optional.of(wallet));
+
+        mockMvc.perform(get("/wallets/1"))
+                .andExpect(status().isOk())
+                .andExpect(header().doesNotExist("*"));
+    }
 
     @Test
     void createWithGivenNameAndAmount() throws Exception {

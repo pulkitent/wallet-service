@@ -3,6 +3,7 @@ package com.tw.expathashala.walletservice.wallet.transaction;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletService;
+import net.bytebuddy.build.ToStringPlugin;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest
