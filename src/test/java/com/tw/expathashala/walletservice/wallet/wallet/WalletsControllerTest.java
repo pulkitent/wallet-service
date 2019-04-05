@@ -16,6 +16,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.tw.expathashala.walletservice.transaction.Transaction.MESSAGE_NEGATIVE_AMOUNT;
 import static org.hamcrest.Matchers.hasSize;
@@ -150,12 +152,24 @@ class WalletsControllerTest {
 
     @Test
     void fetchTransactionsForGivenId() throws Exception {
-        when(transactionService.fetch(any(Long.class))).thenReturn(Arrays.asList(new Transaction(100,TransactionType.CREDIT)));
+        List<Transaction> transactions = Arrays.asList(new Transaction(100,TransactionType.CREDIT));
+        when(transactionService.fetch(any(Long.class))).thenReturn(java.util.Optional.of(transactions));
 
         long wallet_id = 1;
         mockMvc.perform(get("/wallets/" + wallet_id + "/transactions"))
                 .andExpect(jsonPath("$",hasSize(1)))
                 .andExpect(jsonPath("$[0].amount").value(100));
+
+        verify(transactionService).fetch(any(Long.class));
+    }
+
+    @Test
+    void fetchTransactionsForInvalidId() throws Exception {
+        when(transactionService.fetch(any(Long.class))).thenReturn(Optional.empty());
+
+        long invalidId = 99999;
+        mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
+                .andExpect(status().isNotFound());
 
         verify(transactionService).fetch(any(Long.class));
     }

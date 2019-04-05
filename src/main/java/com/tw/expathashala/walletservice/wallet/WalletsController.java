@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -53,13 +52,12 @@ class WalletsController {
     @GetMapping("/{id}/transactions")
     @ResponseStatus(HttpStatus.OK)
     List<Transaction> fetchTransaction(@PathVariable Long id) {
-
         return transactionService.fetch(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public Map<String, String> handleException(MethodArgumentNotValidException ex,HttpServletResponse response){
+    public Map<String, String> handleException(MethodArgumentNotValidException ex, HttpServletResponse response) {
         Map<String, String> errors = new HashMap<>();
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         ex.getBindingResult().getAllErrors().forEach((error) -> {
