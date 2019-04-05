@@ -49,10 +49,10 @@ class WalletsController {
         return walletService.addTransaction(id, transaction);
     }
 
-    @GetMapping("/{id}/transactions")
+    @GetMapping("/{walletId}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    List<Transaction> fetchTransaction(@PathVariable Long id) {
-        return transactionService.fetch(id)
+    List<Transaction> fetchTransactions(@PathVariable Long walletId) {
+        return transactionService.fetch(walletId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 

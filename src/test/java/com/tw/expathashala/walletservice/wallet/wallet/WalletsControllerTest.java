@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -151,16 +152,16 @@ class WalletsControllerTest {
     }
 
     @Test
-    void fetchTransactionsForGivenId() throws Exception {
-        List<Transaction> transactions = Arrays.asList(new Transaction(100,TransactionType.CREDIT));
+    void fetchTransactionsForGivenWalletId() throws Exception {
+        List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT));
         when(transactionService.fetch(any(Long.class))).thenReturn(java.util.Optional.of(transactions));
 
-        long wallet_id = 1;
-        mockMvc.perform(get("/wallets/" + wallet_id + "/transactions"))
-                .andExpect(jsonPath("$",hasSize(1)))
+        long walletId = 1;
+        mockMvc.perform(get("/wallets/" + walletId + "/transactions"))
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].amount").value(100));
 
-        verify(transactionService).fetch(any(Long.class));
+        verify(transactionService).fetch(walletId);
     }
 
     @Test
@@ -171,7 +172,19 @@ class WalletsControllerTest {
         mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
                 .andExpect(status().isNotFound());
 
-        verify(transactionService).fetch(any(Long.class));
+        verify(transactionService).fetch(invalidId);
+    }
+
+    @Test
+    void expectsEmptyListWhenWalletHasNoTransaction() throws Exception {
+        when(transactionService.fetch(any(Long.class))).thenReturn(Optional.of(new ArrayList<Transaction>()));
+
+        long invalidId = 1;
+        mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+
+        verify(transactionService).fetch(invalidId);
     }
 }
 // TODO: Failed to create transaction

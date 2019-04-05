@@ -13,11 +13,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public Transaction save(Transaction transaction) {
-        return transactionRepository.save(transaction);
-    }
-
     public Optional<List<Transaction>> fetch(Long id) {
-        return transactionRepository.findTransactionByWalletId(id);
+        return transactionRepository.findByWalletId(id);
     }
 }
