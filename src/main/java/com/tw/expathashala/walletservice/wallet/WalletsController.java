@@ -24,11 +24,11 @@ class WalletsController {
 
     private WalletService walletService;
 
-    @Autowired
     private TransactionService transactionService;
 
-    WalletsController(WalletService walletService) {
+    WalletsController(WalletService walletService, TransactionService transactionService) {
         this.walletService = walletService;
+        this.transactionService = transactionService;
     }
 
     @PostMapping()

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class TransactionServiceTest {
@@ -29,9 +30,9 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchTransactionByWalletId() {
+    void fetchTransactionsForWalletWithNameJohn() {
         TransactionService transactionService = new TransactionService(transactionRepository);
-        Wallet wallet = new Wallet("John", 1000);
+        Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction transaction = new Transaction(20, TransactionType.DEBIT);
         wallet.process(transaction);
         Wallet savedWallet = walletRepository.save(wallet);
@@ -42,23 +43,44 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchAllTransactionsByWalletId() {
-        int TRANSACTION_AMOUNT = 20;
+    void fetchTransactionsForWalletWithTwoTransaction() {
+        int transactionAmount = 20;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = prepareWalletWithTwoTransactions();
         Wallet savedWallet = walletRepository.save(wallet);
 
         Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get().get(0);
 
-        assertEquals(TRANSACTION_AMOUNT, transactionOfWallet.getAmount());
+        assertEquals(transactionAmount, transactionOfWallet.getAmount());
+    }
+
+    @Test
+    void fetchTransactionsForWalletWithEmptyTransaction() {
+        TransactionService transactionService = new TransactionService(transactionRepository);
+        Wallet wallet = walletWithNameJohnAnd1000Balance();
+        Wallet savedWallet = walletRepository.save(wallet);
+
+        assertTrue(transactionService.fetch(savedWallet.getId()).isEmpty());
+    }
+
+    @Test
+    void fetchTransactionsForInvalidWalletId() {
+        long invalidWalletId = 999L;
+        TransactionService transactionService = new TransactionService(transactionRepository);
+
+        assertTrue(transactionService.fetch(invalidWalletId).isEmpty());
     }
 
     private Wallet prepareWalletWithTwoTransactions() {
-        Wallet wallet = new Wallet("John", 1000);
+        Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT);
         Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT);
         wallet.process(firstTransaction);
         wallet.process(secondTransaction);
         return wallet;
+    }
+
+    private Wallet walletWithNameJohnAnd1000Balance() {
+        return new Wallet("John", 1000);
     }
 }
