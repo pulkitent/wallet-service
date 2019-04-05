@@ -3,6 +3,7 @@ package com.tw.expathashala.walletservice.wallet;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionService;
 import io.swagger.annotations.Api;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,11 +24,12 @@ import java.util.Map;
 class WalletsController {
 
     private WalletService walletService;
+
+    @Autowired
     private TransactionService transactionService;
 
-    WalletsController(WalletService walletService, TransactionService transactionService) {
+    WalletsController(WalletService walletService) {
         this.walletService = walletService;
-        this.transactionService = transactionService;
     }
 
     @PostMapping()
@@ -49,9 +51,11 @@ class WalletsController {
     }
 
     @GetMapping("/{id}/transactions")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     List<Transaction> fetchTransaction(@PathVariable Long id) {
-        return transactionService.fetch(id);
+
+        return transactionService.fetch(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
