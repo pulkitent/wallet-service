@@ -2,6 +2,7 @@ package com.tw.expathashala.walletservice.wallet.wallet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.expathashala.walletservice.transaction.Transaction;
+import com.tw.expathashala.walletservice.transaction.TransactionService;
 import com.tw.expathashala.walletservice.transaction.TransactionType;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletService;
@@ -14,7 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import static com.tw.expathashala.walletservice.transaction.Transaction.MESSAGE_NEGATIVE_AMOUNT;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,6 +36,9 @@ class WalletsControllerTest {
     @MockBean
     private
     WalletService walletService;
+
+    @MockBean
+    private TransactionService transactionService;
 
     @Test
     void shouldPassWhenRequestContainsOriginHeader() throws Exception {
@@ -139,6 +149,42 @@ class WalletsControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(invalidTransaction)))
                 .andExpect(jsonPath("$.amount").value(Transaction.MAX_AMOUNT_ALLOWED_EXCEEDED_MESSAGE));
+    }
+
+    @Test
+    void fetchTransactionsForGivenWalletId() throws Exception {
+        List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT));
+        when(transactionService.fetch(any(Long.class))).thenReturn(java.util.Optional.of(transactions));
+
+        long walletId = 1;
+        mockMvc.perform(get("/wallets/" + walletId + "/transactions"))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].amount").value(100));
+
+        verify(transactionService).fetch(walletId);
+    }
+
+    @Test
+    void fetchTransactionsForInvalidId() throws Exception {
+        when(transactionService.fetch(any(Long.class))).thenReturn(Optional.empty());
+
+        long invalidId = 99999;
+        mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
+                .andExpect(status().isNotFound());
+
+        verify(transactionService).fetch(invalidId);
+    }
+
+    @Test
+    void expectsEmptyListWhenWalletHasNoTransaction() throws Exception {
+        when(transactionService.fetch(any(Long.class))).thenReturn(Optional.of(new ArrayList<Transaction>()));
+
+        long invalidId = 1;
+        mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+
+        verify(transactionService).fetch(invalidId);
     }
 }
 // TODO: Failed to create transaction

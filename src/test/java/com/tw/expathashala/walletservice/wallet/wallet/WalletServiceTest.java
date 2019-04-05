@@ -36,7 +36,7 @@ class WalletServiceTest {
     @Test
     void saveTheDataInDataBase() {
         WalletService walletService = new WalletService(walletRepository);
-        Wallet wallet = new Wallet("abc", 200);
+        Wallet wallet = walletWithNameJohnAndBalance200();
         Wallet expectedWallet = walletService.save(wallet);
 
         assertEquals(expectedWallet.getName(), wallet.getName());
@@ -46,7 +46,7 @@ class WalletServiceTest {
     @Test
     void fetchDetailsWhenIdIsGiven() {
         WalletService walletService = new WalletService(walletRepository);
-        Wallet wallet = new Wallet("abc", 200);
+        Wallet wallet = walletWithNameJohnAndBalance200();
 
         Wallet expectedWallet = walletService.save(wallet);
         Optional<Wallet> findWalletBasedOnId = walletService.findById(wallet.getId());
@@ -56,10 +56,11 @@ class WalletServiceTest {
 
     @Nested
     class BusinessTransaction {
+
         @Test
         void addTransactionsLinkedToAWalletOnSaveOfWallet() {
             WalletService walletService = new WalletService(walletRepository);
-            Wallet wallet = new Wallet("Ved", 200);
+            Wallet wallet = walletWithNameJohnAndBalance200();
             Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
             Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT);
             wallet.process(firstTransaction);
@@ -69,11 +70,10 @@ class WalletServiceTest {
 
             Assertions.assertEquals(2, transactionRepository.count());
         }
-
         @Test
         void addTransactionsLinkedToAWalletOnSaveOfWalletAndUpdateBalance() {
             WalletService walletService = new WalletService(walletRepository);
-            Wallet wallet = new Wallet("Ved", 200);
+            Wallet wallet = walletWithNameJohnAndBalance200();
             Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
             Transaction secondTransaction = new Transaction(30, TransactionType.CREDIT);
             wallet.process(firstTransaction);
@@ -87,7 +87,7 @@ class WalletServiceTest {
         @Test
         void addTransactionsToAWalletAndUpdateBalance() {
             WalletService walletService = new WalletService(walletRepository);
-            Wallet wallet = new Wallet("Ved", 200);
+            Wallet wallet = walletWithNameJohnAndBalance200();
             Wallet savedWallet = walletService.save(wallet);
             Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
 
@@ -96,5 +96,9 @@ class WalletServiceTest {
             Wallet updatedWallet = walletService.findById(savedWallet.getId()).get();
             Assertions.assertEquals(210, updatedWallet.getBalance());
         }
+
+    }
+    private Wallet walletWithNameJohnAndBalance200() {
+        return new Wallet("John", 200);
     }
 }
