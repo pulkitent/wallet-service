@@ -14,6 +14,8 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,6 +78,16 @@ class TransactionTest {
         Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Snacks");
 
         assertEquals("Snacks",transaction.getRemark());
+    }
+
+    @Test
+    void expectsTransactionToHaveDateBeforePersistence(){
+        Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Snacks");
+        final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
+
+        transaction.createdAtNow();
+
+        assertTrue(transaction.getCreatedAt().after(oneHourBefore));
     }
 }
 

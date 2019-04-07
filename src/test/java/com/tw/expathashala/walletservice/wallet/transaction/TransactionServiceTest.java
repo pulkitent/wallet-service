@@ -91,7 +91,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchTransactionsHavingValidDateWhenGivenValidWallet() {
+    void fetchTransactionsHavingDateWhenGivenValidWallet() {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction firstTransaction = new Transaction(200, TransactionType.DEBIT, "Movie");
