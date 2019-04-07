@@ -45,7 +45,7 @@ public class Transaction {
     }
 
     public Transaction(int amount, TransactionType type, String remark) {
-        this(amount,type);
+        this(amount, type);
         this.remark = remark;
     }
 
@@ -75,5 +75,10 @@ public class Transaction {
 
     public String getRemark() {
         return this.remark;
+    }
+
+    @PrePersist
+    public void createdAtNow() {
+        this.createdAt = new Date();
     }
 }

@@ -72,7 +72,7 @@ class TransactionTest {
     }
 
     @Test
-    void expectsTransactionToHaveDateAndRemarkWhenCreated(){
+    void expectsTransactionToHaveRemarkWhenCreated(){
         Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Snacks");
 
         assertEquals("Snacks",transaction.getRemark());
