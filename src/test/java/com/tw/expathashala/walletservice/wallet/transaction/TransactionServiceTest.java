@@ -97,10 +97,10 @@ class TransactionServiceTest {
         Transaction firstTransaction = new Transaction(200, TransactionType.DEBIT, "Movie");
         wallet.process(firstTransaction);
         Wallet savedWallet = walletRepository.save(wallet);
+        final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
 
         Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
-        final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
         assertTrue(transactionOfWallet.getCreatedAt().after(oneHourBefore));
     }
 
