@@ -2,20 +2,32 @@ package com.tw.expathashala.walletservice.wallet.transaction;
 
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionType;
+import com.tw.expathashala.walletservice.wallet.Wallet;
+import com.tw.expathashala.walletservice.wallet.WalletService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static java.time.LocalDate.now;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TransactionTest {
     private static Validator validator;
+
+    @Autowired
+    private WalletService walletRepository;
 
     @BeforeAll
     static void setUp() {
@@ -57,6 +69,13 @@ class TransactionTest {
         Set<ConstraintViolation<Transaction>> violations = validator.validate(validTransaction);
 
         assertTrue(violations.isEmpty());
+    }
+
+    @Test
+    void expectsTransactionToHaveDateAndRemarkWhenCreated(){
+        Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Snacks");
+
+        assertEquals("Snacks",transaction.getRemark());
     }
 }
 

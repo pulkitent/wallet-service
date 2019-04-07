@@ -37,7 +37,7 @@ class TransactionServiceTest {
         wallet.process(transaction);
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get().get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
         assertEquals(transaction.getAmount(), transactionOfWallet.getAmount());
     }
@@ -49,7 +49,7 @@ class TransactionServiceTest {
         Wallet wallet = prepareWalletWithTwoTransactions();
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get().get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
         assertEquals(transactionAmount, transactionOfWallet.getAmount());
     }
@@ -70,6 +70,20 @@ class TransactionServiceTest {
 
         assertTrue(transactionService.fetch(invalidWalletId).isEmpty());
     }
+
+    @Test
+    void fetchTransactionsHavingRemarksWhenGivenValidWallet() {
+        TransactionService transactionService = new TransactionService(transactionRepository);
+        Wallet wallet = walletWithNameJohnAnd1000Balance();
+        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT,"Snacks");
+        wallet.process(firstTransaction);
+        Wallet savedWallet = walletRepository.save(wallet);
+
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+
+        assertEquals("Snacks", transactionOfWallet.getRemark());
+    }
+
 
     private Wallet prepareWalletWithTwoTransactions() {
         Wallet wallet = walletWithNameJohnAnd1000Balance();

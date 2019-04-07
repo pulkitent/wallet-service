@@ -52,8 +52,11 @@ class WalletsController {
     @GetMapping("/{walletId}/transactions")
     @ResponseStatus(HttpStatus.OK)
     List<Transaction> fetchTransactions(@PathVariable Long walletId) {
-        return transactionService.fetch(walletId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        List<Transaction> transactions = transactionService.fetch(walletId);
+        if(transactions.size() == 0){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        return transactions;
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
