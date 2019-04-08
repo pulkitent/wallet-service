@@ -115,7 +115,7 @@ class WalletsControllerTest {
 
     @Test
     void shouldBeAbleToAddTransactionForAGivenWallet() throws Exception {
-        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT);
+        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT,"Snacks");
         long wallet_id = 999L;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -129,7 +129,7 @@ class WalletsControllerTest {
 
     @Test
     void expectsErrorMessageWhenGivenNegativeAmount() throws Exception {
-        Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT);
+        Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT,"Snacks");
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -141,7 +141,7 @@ class WalletsControllerTest {
 
     @Test
     void expectsErrorMessageWhenWhenTransactionAmountExceedsMaxLimit() throws Exception {
-        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT);
+        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT,"Snacks");
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -153,8 +153,8 @@ class WalletsControllerTest {
 
     @Test
     void fetchTransactionsForGivenWalletId() throws Exception {
-        List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT));
-        when(transactionService.fetch(any(Long.class))).thenReturn(java.util.Optional.of(transactions));
+        List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT,"Snacks"));
+        when(transactionService.fetch(any(Long.class))).thenReturn(transactions);
 
         long walletId = 1;
         mockMvc.perform(get("/wallets/" + walletId + "/transactions"))
@@ -166,7 +166,7 @@ class WalletsControllerTest {
 
     @Test
     void fetchTransactionsForInvalidId() throws Exception {
-        when(transactionService.fetch(any(Long.class))).thenReturn(Optional.empty());
+        when(transactionService.fetch(any(Long.class))).thenReturn(new ArrayList<>());
 
         long invalidId = 99999;
         mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
@@ -177,14 +177,13 @@ class WalletsControllerTest {
 
     @Test
     void expectsEmptyListWhenWalletHasNoTransaction() throws Exception {
-        when(transactionService.fetch(any(Long.class))).thenReturn(Optional.of(new ArrayList<Transaction>()));
+        when(transactionService.fetch(any(Long.class))).thenReturn(new ArrayList<>());
 
-        long invalidId = 1;
-        mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+        long walletId = 1;
+        mockMvc.perform(get("/wallets/" + walletId + "/transactions"))
+                .andExpect(status().isNotFound());
 
-        verify(transactionService).fetch(invalidId);
+        verify(transactionService).fetch(walletId);
     }
 }
 // TODO: Failed to create transaction

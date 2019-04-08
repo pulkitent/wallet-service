@@ -6,6 +6,7 @@ import com.tw.expathashala.walletservice.wallet.Wallet;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Positive;
+import java.util.Date;
 
 //Represents exchange of money
 @Entity
@@ -26,6 +27,10 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
+    private Date createdAt;
+
+    private String remark;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "wallet_id")
     @JsonIgnore
@@ -34,9 +39,10 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(int amount, TransactionType type) {
+    public Transaction(int amount, TransactionType type, String remark) {
         this.amount = amount;
         this.type = type;
+        this.remark = remark;
     }
 
     public void setWallet(Wallet wallet) {
@@ -57,5 +63,18 @@ public class Transaction {
 
     public int amountToUpdate() {
         return type.amountToUpdate(amount);
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getRemark() {
+        return this.remark;
+    }
+
+    @PrePersist
+    public void createdAtNow() {
+        this.createdAt = new Date();
     }
 }

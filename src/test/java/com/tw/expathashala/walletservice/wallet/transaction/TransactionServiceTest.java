@@ -11,6 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TransactionServiceTest {
 
     @Autowired
-    TransactionRepository transactionRepository;
+    private TransactionRepository transactionRepository;
 
     @Autowired
-    WalletRepository walletRepository;
+    private WalletRepository walletRepository;
 
     @AfterEach
     void tearDown() {
@@ -33,11 +37,11 @@ class TransactionServiceTest {
     void fetchTransactionsForWalletWithNameJohn() {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = walletWithNameJohnAnd1000Balance();
-        Transaction transaction = new Transaction(20, TransactionType.DEBIT);
+        Transaction transaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
         wallet.process(transaction);
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get().get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
         assertEquals(transaction.getAmount(), transactionOfWallet.getAmount());
     }
@@ -49,7 +53,7 @@ class TransactionServiceTest {
         Wallet wallet = prepareWalletWithTwoTransactions();
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get().get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
         assertEquals(transactionAmount, transactionOfWallet.getAmount());
     }
@@ -71,10 +75,38 @@ class TransactionServiceTest {
         assertTrue(transactionService.fetch(invalidWalletId).isEmpty());
     }
 
+    @Test
+    void fetchTransactionsHavingRemarksWhenGivenValidWallet() {
+        TransactionService transactionService = new TransactionService(transactionRepository);
+        Wallet savedWallet = saveWalletWithSingleTransaction();
+
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+
+        assertEquals("Snacks", transactionOfWallet.getRemark());
+    }
+
+    @Test
+    void fetchTransactionsHavingDateWhenGivenValidWallet() {
+        TransactionService transactionService = new TransactionService(transactionRepository);
+        final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
+        Wallet savedWallet = saveWalletWithSingleTransaction();
+
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+
+        assertTrue(transactionOfWallet.getCreatedAt().after(oneHourBefore));
+    }
+
+    private Wallet saveWalletWithSingleTransaction() {
+        Wallet wallet = walletWithNameJohnAnd1000Balance();
+        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
+        wallet.process(firstTransaction);
+        return walletRepository.save(wallet);
+    }
+
     private Wallet prepareWalletWithTwoTransactions() {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
-        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT);
-        Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT);
+        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
+        Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT, "Snacks");
         wallet.process(firstTransaction);
         wallet.process(secondTransaction);
         return wallet;
