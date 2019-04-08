@@ -39,13 +39,9 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(int amount, TransactionType type) {
+    public Transaction(int amount, TransactionType type, String remark) {
         this.amount = amount;
         this.type = type;
-    }
-
-    public Transaction(int amount, TransactionType type, String remark) {
-        this(amount, type);
         this.remark = remark;
     }
 

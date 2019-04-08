@@ -115,7 +115,7 @@ class WalletsControllerTest {
 
     @Test
     void shouldBeAbleToAddTransactionForAGivenWallet() throws Exception {
-        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT);
+        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT,"Snacks");
         long wallet_id = 999L;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -129,7 +129,7 @@ class WalletsControllerTest {
 
     @Test
     void expectsErrorMessageWhenGivenNegativeAmount() throws Exception {
-        Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT);
+        Transaction firstTransaction = new Transaction(-100, TransactionType.CREDIT,"Snacks");
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -141,7 +141,7 @@ class WalletsControllerTest {
 
     @Test
     void expectsErrorMessageWhenWhenTransactionAmountExceedsMaxLimit() throws Exception {
-        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT);
+        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT,"Snacks");
         long wallet_id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -153,7 +153,7 @@ class WalletsControllerTest {
 
     @Test
     void fetchTransactionsForGivenWalletId() throws Exception {
-        List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT));
+        List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT,"Snacks"));
         when(transactionService.fetch(any(Long.class))).thenReturn(transactions);
 
         long walletId = 1;

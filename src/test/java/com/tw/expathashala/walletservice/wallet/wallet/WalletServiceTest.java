@@ -61,8 +61,8 @@ class WalletServiceTest {
         void addTransactionsLinkedToAWalletOnSaveOfWallet() {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = walletWithNameJohnAndBalance200();
-            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
-            Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT);
+            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
+            Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT,"Snacks");
             wallet.process(firstTransaction);
             wallet.process(secondTransaction);
 
@@ -74,8 +74,8 @@ class WalletServiceTest {
         void addTransactionsLinkedToAWalletOnSaveOfWalletAndUpdateBalance() {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = walletWithNameJohnAndBalance200();
-            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
-            Transaction secondTransaction = new Transaction(30, TransactionType.CREDIT);
+            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
+            Transaction secondTransaction = new Transaction(30, TransactionType.CREDIT,"Snacks");
             wallet.process(firstTransaction);
             wallet.process(secondTransaction);
 
@@ -89,7 +89,7 @@ class WalletServiceTest {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = walletWithNameJohnAndBalance200();
             Wallet savedWallet = walletService.save(wallet);
-            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
+            Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
 
             walletService.addTransaction(savedWallet.getId(),firstTransaction);
 

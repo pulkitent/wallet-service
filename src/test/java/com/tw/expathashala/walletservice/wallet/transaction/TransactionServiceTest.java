@@ -13,8 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +37,7 @@ class TransactionServiceTest {
     void fetchTransactionsForWalletWithNameJohn() {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = walletWithNameJohnAnd1000Balance();
-        Transaction transaction = new Transaction(20, TransactionType.DEBIT);
+        Transaction transaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
         wallet.process(transaction);
         Wallet savedWallet = walletRepository.save(wallet);
 
@@ -80,10 +78,7 @@ class TransactionServiceTest {
     @Test
     void fetchTransactionsHavingRemarksWhenGivenValidWallet() {
         TransactionService transactionService = new TransactionService(transactionRepository);
-        Wallet wallet = walletWithNameJohnAnd1000Balance();
-        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
-        wallet.process(firstTransaction);
-        Wallet savedWallet = walletRepository.save(wallet);
+        Wallet savedWallet = saveWalletWithSingleTransaction();
 
         Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
@@ -93,21 +88,25 @@ class TransactionServiceTest {
     @Test
     void fetchTransactionsHavingDateWhenGivenValidWallet() {
         TransactionService transactionService = new TransactionService(transactionRepository);
-        Wallet wallet = walletWithNameJohnAnd1000Balance();
-        Transaction firstTransaction = new Transaction(200, TransactionType.DEBIT, "Movie");
-        wallet.process(firstTransaction);
-        Wallet savedWallet = walletRepository.save(wallet);
         final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
+        Wallet savedWallet = saveWalletWithSingleTransaction();
 
         Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
 
         assertTrue(transactionOfWallet.getCreatedAt().after(oneHourBefore));
     }
 
+    private Wallet saveWalletWithSingleTransaction() {
+        Wallet wallet = walletWithNameJohnAnd1000Balance();
+        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
+        wallet.process(firstTransaction);
+        return walletRepository.save(wallet);
+    }
+
     private Wallet prepareWalletWithTwoTransactions() {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
-        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT);
-        Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT);
+        Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
+        Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT, "Snacks");
         wallet.process(firstTransaction);
         wallet.process(secondTransaction);
         return wallet;

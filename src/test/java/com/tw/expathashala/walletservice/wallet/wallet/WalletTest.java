@@ -42,8 +42,8 @@ class WalletTest {
     @Test
     void addTransactionAndUpdateBalance() throws IOException {
         Wallet wallet = new Wallet("Akila",1000);
-        Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT);
-        Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT);
+        Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT,"Travel");
+        Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT,"Travel");
         wallet.process(firstTransaction);
         wallet.process(secondTransaction);
 

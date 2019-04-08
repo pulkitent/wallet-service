@@ -39,7 +39,7 @@ class TransactionTest {
 
     @Test
     void expectsAmountViolationWhenGivenNegativeTenAmount() {
-        Transaction invalidTransaction = new Transaction(-10, TransactionType.CREDIT);
+        Transaction invalidTransaction = new Transaction(-10, TransactionType.CREDIT,"Snacks");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(invalidTransaction);
 
@@ -48,7 +48,7 @@ class TransactionTest {
 
     @Test
     void expectsNoViolationWhenGivenPositiveTenAmount() {
-        Transaction validTransaction = new Transaction(10, TransactionType.CREDIT);
+        Transaction validTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(validTransaction);
 
@@ -57,7 +57,7 @@ class TransactionTest {
 
     @Test
     void expectsAmountViolationWhenAmountExceedsMaxLimit() {
-        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT);
+        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT,"Snacks");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(invalidTransaction);
 
@@ -66,7 +66,7 @@ class TransactionTest {
 
     @Test
     void expectsNoViolationWhenGiven100Amount() {
-        Transaction validTransaction = new Transaction(100, TransactionType.CREDIT);
+        Transaction validTransaction = new Transaction(100, TransactionType.CREDIT,"Travel");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(validTransaction);
 
@@ -75,9 +75,9 @@ class TransactionTest {
 
     @Test
     void expectsTransactionToHaveRemarkWhenCreated(){
-        Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Snacks");
+        Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Travel");
 
-        assertEquals("Snacks",transaction.getRemark());
+        assertEquals("Travel",transaction.getRemark());
     }
 
     @Test
