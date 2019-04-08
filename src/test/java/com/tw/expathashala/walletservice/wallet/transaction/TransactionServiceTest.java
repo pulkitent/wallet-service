@@ -27,6 +27,8 @@ class TransactionServiceTest {
     @Autowired
     private WalletRepository walletRepository;
 
+    int limit = 9999;
+
     @AfterEach
     void tearDown() {
         transactionRepository.deleteAll();
@@ -41,7 +43,7 @@ class TransactionServiceTest {
         wallet.process(transaction);
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId(), limit).get(0);
 
         assertEquals(transaction.getAmount(), transactionOfWallet.getAmount());
     }
@@ -53,7 +55,7 @@ class TransactionServiceTest {
         Wallet wallet = prepareWalletWithTwoTransactions();
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId(), limit).get(0);
 
         assertEquals(transactionAmount, transactionOfWallet.getAmount());
     }
@@ -64,7 +66,7 @@ class TransactionServiceTest {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Wallet savedWallet = walletRepository.save(wallet);
 
-        assertTrue(transactionService.fetch(savedWallet.getId()).isEmpty());
+        assertTrue(transactionService.fetch(savedWallet.getId(), limit).isEmpty());
     }
 
     @Test
@@ -72,7 +74,7 @@ class TransactionServiceTest {
         long invalidWalletId = 999L;
         TransactionService transactionService = new TransactionService(transactionRepository);
 
-        assertTrue(transactionService.fetch(invalidWalletId).isEmpty());
+        assertTrue(transactionService.fetch(invalidWalletId, limit).isEmpty());
     }
 
     @Test
@@ -80,7 +82,7 @@ class TransactionServiceTest {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet savedWallet = saveWalletWithSingleTransaction();
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId(), limit).get(0);
 
         assertEquals("Snacks", transactionOfWallet.getRemark());
     }
@@ -91,7 +93,7 @@ class TransactionServiceTest {
         final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
         Wallet savedWallet = saveWalletWithSingleTransaction();
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId(), limit).get(0);
 
         assertTrue(transactionOfWallet.getCreatedAt().after(oneHourBefore));
     }
