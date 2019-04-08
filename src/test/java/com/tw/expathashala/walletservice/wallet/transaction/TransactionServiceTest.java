@@ -28,6 +28,7 @@ class TransactionServiceTest {
     @Autowired
     private WalletRepository walletRepository;
 
+    private final int limit = Integer.MAX_VALUE;
 
     @AfterEach
     void tearDown() {
@@ -37,7 +38,6 @@ class TransactionServiceTest {
 
     @Test
     void fetchTransactionsForWalletWithNameJohn() {
-        int limit = 9999;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction transaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
@@ -52,7 +52,6 @@ class TransactionServiceTest {
     @Test
     void fetchTransactionsForWalletWithTwoTransaction() {
         int transactionAmount = 100;
-        int limit = 9999;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = prepareWalletWithTwoTransactions();
         Wallet savedWallet = walletRepository.save(wallet);
@@ -64,7 +63,6 @@ class TransactionServiceTest {
 
     @Test
     void fetchTransactionsForWalletWithEmptyTransaction() {
-        int limit = 9999;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Wallet savedWallet = walletRepository.save(wallet);
@@ -74,7 +72,6 @@ class TransactionServiceTest {
 
     @Test
     void fetchTransactionsForInvalidWalletId() {
-        int limit = 9999;
         long invalidWalletId = 999L;
         TransactionService transactionService = new TransactionService(transactionRepository);
 
@@ -83,7 +80,6 @@ class TransactionServiceTest {
 
     @Test
     void fetchTransactionsHavingRemarksWhenGivenValidWallet() {
-        int limit = 9999;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet savedWallet = saveWalletWithSingleTransaction();
 
@@ -94,7 +90,6 @@ class TransactionServiceTest {
 
     @Test
     void fetchTransactionsHavingDateWhenGivenValidWallet() {
-        int limit = 9999;
         TransactionService transactionService = new TransactionService(transactionRepository);
         final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
         Wallet savedWallet = saveWalletWithSingleTransaction();
@@ -105,7 +100,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void expects1TransactionWhenLimitIs1(){
+    void expects1TransactionWhenLimitIs1() {
         int limit = 1;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = prepareWalletWithTwoTransactions();
@@ -113,11 +108,11 @@ class TransactionServiceTest {
 
         List<Transaction> transactions = transactionService.fetch(savedWallet.getId(), limit);
 
-        assertEquals(limit,transactions.size());
+        assertEquals(limit, transactions.size());
     }
 
     @Test
-    void expectsLatestTransactionFromDBWhenLimitIs1(){
+    void expectsLatestTransactionFromDBWhenLimitIs1() {
         int limit = 1;
         int latestTransactionAmount = 100;
         TransactionService transactionService = new TransactionService(transactionRepository);
@@ -126,7 +121,7 @@ class TransactionServiceTest {
 
         List<Transaction> transactions = transactionService.fetch(savedWallet.getId(), limit);
 
-        assertEquals(latestTransactionAmount,transactions.get(0).getAmount());
+        assertEquals(latestTransactionAmount, transactions.get(0).getAmount());
     }
 
     private Wallet saveWalletWithSingleTransaction() {
