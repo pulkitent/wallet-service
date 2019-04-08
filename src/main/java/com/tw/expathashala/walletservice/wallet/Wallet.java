@@ -21,7 +21,7 @@ public class Wallet {
     private String name;
     private int balance;
 
-    @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     public List<Transaction> transaction;
 
@@ -54,7 +54,15 @@ public class Wallet {
         transaction.setWallet(this);
     }
 
+    private Boolean isDebitPossible(int amountToUpdate) {
+        return amountToUpdate < 0 && balance < Math.abs(amountToUpdate);
+    }
+
     private void updateBalance(int amountToUpdate) {
-        balance = balance + amountToUpdate;
+        String debitNotPossible = "Wallet Balance is less than debit amount";
+        if (isDebitPossible(amountToUpdate)) {
+            throw new RuntimeException(debitNotPossible);
+        }
+        balance += amountToUpdate;
     }
 }
