@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionType;
-import com.tw.expathashala.walletservice.wallet.DebitException;
+import com.tw.expathashala.walletservice.wallet.DebitWalletBalanceException;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,7 +40,7 @@ class WalletTest {
     }
 
     @Test
-    void addTransactionAndUpdateBalance() throws DebitException {
+    void addTransactionAndUpdateBalance() throws DebitWalletBalanceException {
         Wallet wallet = new Wallet("Akila", 1000);
         Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT, "Travel");
         Transaction secondTransaction = new Transaction(30, TransactionType.DEBIT, "Travel");
@@ -51,10 +51,10 @@ class WalletTest {
     }
 
     @Test
-    void debitOfAmountGreaterThanWalletBalanceShouldThrowDebitException(){
+    void debitOfAmountGreaterThanWalletBalanceShouldThrowDebitException() {
         Wallet wallet = new Wallet("Akila", 1000);
         Transaction transaction = new Transaction(2000, TransactionType.DEBIT, "Travel");
 
-        assertThrows(DebitException.class, ()->wallet.process(transaction) );
+        assertThrows(DebitWalletBalanceException.class, () -> wallet.process(transaction));
     }
 }

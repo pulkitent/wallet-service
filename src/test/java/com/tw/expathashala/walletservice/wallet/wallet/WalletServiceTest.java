@@ -3,7 +3,7 @@ package com.tw.expathashala.walletservice.wallet.wallet;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionRepository;
 import com.tw.expathashala.walletservice.transaction.TransactionType;
-import com.tw.expathashala.walletservice.wallet.DebitException;
+import com.tw.expathashala.walletservice.wallet.DebitWalletBalanceException;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletRepository;
 import com.tw.expathashala.walletservice.wallet.WalletService;
@@ -59,7 +59,7 @@ class WalletServiceTest {
     class BusinessTransaction {
 
         @Test
-        void addTransactionsLinkedToAWalletOnSaveOfWallet() throws DebitException {
+        void addTransactionsLinkedToAWalletOnSaveOfWallet() throws DebitWalletBalanceException {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = walletWithNameJohnAndBalance200();
             Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
@@ -72,7 +72,7 @@ class WalletServiceTest {
             Assertions.assertEquals(2, transactionRepository.count());
         }
         @Test
-        void addTransactionsLinkedToAWalletOnSaveOfWalletAndUpdateBalance() throws DebitException {
+        void addTransactionsLinkedToAWalletOnSaveOfWalletAndUpdateBalance() throws DebitWalletBalanceException {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = walletWithNameJohnAndBalance200();
             Transaction firstTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
@@ -86,7 +86,7 @@ class WalletServiceTest {
         }
 
         @Test
-        void addTransactionsToAWalletAndUpdateBalance() throws DebitException {
+        void addTransactionsToAWalletAndUpdateBalance() throws DebitWalletBalanceException {
             WalletService walletService = new WalletService(walletRepository);
             Wallet wallet = walletWithNameJohnAndBalance200();
             Wallet savedWallet = walletService.save(wallet);

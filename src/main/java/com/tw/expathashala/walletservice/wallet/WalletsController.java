@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.tw.expathashala.walletservice.wallet.Wallet.DEBIT_AMOUNT_LESS_THAN_BALANCE;
+import static com.tw.expathashala.walletservice.wallet.DebitWalletBalanceException.AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -49,8 +49,8 @@ class WalletsController {
     Transaction createTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
         try {
             return walletService.addTransaction(id, transaction);
-        } catch (DebitException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,  DEBIT_AMOUNT_LESS_THAN_BALANCE);
+        } catch (DebitWalletBalanceException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE);
         }
     }
 

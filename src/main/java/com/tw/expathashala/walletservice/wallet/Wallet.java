@@ -9,12 +9,12 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tw.expathashala.walletservice.wallet.DebitWalletBalanceException.AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE;
+
 // Represents money holder
 @Entity
 @ApiModel(description = "An entity to describe wallet")
 public class Wallet {
-
-    static final String DEBIT_AMOUNT_LESS_THAN_BALANCE = "Wallet Balance is less than debit amount";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,20 +49,20 @@ public class Wallet {
     }
 
 
-    public void process(Transaction transaction) throws DebitException {
+    public void process(Transaction transaction) throws DebitWalletBalanceException {
         this.transaction.add(transaction);
         int amountToUpdate = transaction.amountToUpdate();
         updateBalance(amountToUpdate);
         transaction.setWallet(this);
     }
 
-    private Boolean isDebitNotPossible(int amountToUpdate) {
+    private Boolean isNotDebitable(int amountToUpdate) {
         return amountToUpdate < 0 && balance < Math.abs(amountToUpdate);
     }
 
-    private void updateBalance(int amountToUpdate) throws DebitException {
-        if (isDebitNotPossible(amountToUpdate)) {
-            throw new DebitException(DEBIT_AMOUNT_LESS_THAN_BALANCE);
+    private void updateBalance(int amountToUpdate) throws DebitWalletBalanceException {
+        if (isNotDebitable(amountToUpdate)) {
+            throw new DebitWalletBalanceException(AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE);
         }
         balance += amountToUpdate;
     }

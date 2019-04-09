@@ -17,7 +17,7 @@ public class Transaction {
     public static final String MESSAGE_NEGATIVE_AMOUNT = "Amount should be greater than zero";
     public static final String MAX_AMOUNT_ALLOWED_EXCEEDED_MESSAGE = "Amount should not exceed ₹ 10000";
     private static final int MAX_AMOUNT_ALLOWED = 10000;
-    private static final String CAN_NOT_BE_EMPTY = "remark can not be empty";
+    private static final String CAN_NOT_BE_EMPTY = "remarks can not be empty";
 
 
     @Id
