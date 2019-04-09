@@ -56,12 +56,12 @@ public class Wallet {
         transaction.setWallet(this);
     }
 
-    private Boolean isNotDebitable(int amountToUpdate) {
-        return amountToUpdate < 0 && balance < Math.abs(amountToUpdate);
+    private Boolean isDebitPossible(int amountToUpdate) {
+        return balance + amountToUpdate >= 0;
     }
 
     private void updateBalance(int amountToUpdate) throws DebitWalletBalanceException {
-        if (isNotDebitable(amountToUpdate)) {
+        if (!isDebitPossible(amountToUpdate)) {
             throw new DebitWalletBalanceException(AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE);
         }
         balance += amountToUpdate;
