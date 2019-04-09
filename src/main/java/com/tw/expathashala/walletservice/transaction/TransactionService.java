@@ -13,7 +13,8 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public List<Transaction> fetch(Long id, int limit) {
-        return transactionRepository.findByWalletIdOrderByCreatedAtDesc(id , PageRequest.of(0, limit));
+    public List<Transaction> fetchAll(Long walletId, int limit) {
+        int pageOffset = 0;
+        return transactionRepository.findByWalletIdOrderByCreatedAtDesc(walletId , PageRequest.of(pageOffset, limit));
     }
 }

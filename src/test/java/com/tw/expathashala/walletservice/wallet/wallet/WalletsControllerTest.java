@@ -155,37 +155,37 @@ class WalletsControllerTest {
         int limit = 1;
         long walletId = 1L;
         List<Transaction> transactions = Arrays.asList(new Transaction(100, TransactionType.CREDIT, "Snacks"));
-        when(transactionService.fetch(walletId, limit)).thenReturn(transactions);
+        when(transactionService.fetchAll(walletId, limit)).thenReturn(transactions);
 
         mockMvc.perform(get("/wallets/" + walletId + "/transactions").param("limit", limit + ""))
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].amount").value(100));
 
-        verify(transactionService).fetch(walletId, limit);
+        verify(transactionService).fetchAll(walletId, limit);
     }
 
     @Test
     void fetchTransactionsForInvalidId() throws Exception {
         long invalidId = 99999;
         int limit = 2147483647;
-        when(transactionService.fetch(invalidId, limit)).thenReturn(new ArrayList<>());
+        when(transactionService.fetchAll(invalidId, limit)).thenReturn(new ArrayList<>());
 
         mockMvc.perform(get("/wallets/" + invalidId + "/transactions"))
                 .andExpect(status().isNotFound());
 
-        verify(transactionService).fetch(invalidId, limit);
+        verify(transactionService).fetchAll(invalidId, limit);
     }
 
     @Test
     void expectsEmptyListWhenWalletHasNoTransaction() throws Exception {
         long walletId = 1;
         int limit = 2147483647;
-        when(transactionService.fetch(walletId, limit)).thenReturn(new ArrayList<>());
+        when(transactionService.fetchAll(walletId, limit)).thenReturn(new ArrayList<>());
 
         mockMvc.perform(get("/wallets/" + walletId + "/transactions"))
                 .andExpect(status().isNotFound());
 
-        verify(transactionService).fetch(walletId, limit);
+        verify(transactionService).fetchAll(walletId, limit);
     }
 }
 // TODO: Failed to create transaction

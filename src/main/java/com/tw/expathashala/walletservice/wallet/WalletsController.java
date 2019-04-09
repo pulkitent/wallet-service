@@ -52,7 +52,7 @@ class WalletsController {
     @ResponseStatus(HttpStatus.OK)
     List<Transaction> fetchTransactions(@PathVariable Long walletId, @RequestParam(required = false,
             defaultValue = Integer.MAX_VALUE + "") int limit) {
-        List<Transaction> transactions = transactionService.fetch(walletId, limit);
+        List<Transaction> transactions = transactionService.fetchAll(walletId, limit);
         if(transactions.size() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
