@@ -1,5 +1,6 @@
 package com.tw.expathashala.walletservice.transaction;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,8 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public List<Transaction> fetch(Long id) {
-        return transactionRepository.findByWalletId(id);
+    public List<Transaction> fetchAll(Long id, int limit) {
+        int pageOffset = 0;
+        return transactionRepository.findByWalletIdOrderByCreatedAtDesc(id , PageRequest.of(pageOffset, limit));
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +28,8 @@ class TransactionServiceTest {
 
     @Autowired
     private WalletRepository walletRepository;
+
+    private final int limit = Integer.MAX_VALUE;
 
     @AfterEach
     void tearDown() {
@@ -42,19 +45,18 @@ class TransactionServiceTest {
         wallet.process(transaction);
         Wallet savedWallet = walletRepository.save(wallet);
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetchAll(savedWallet.getId(), limit).get(0);
 
         assertEquals(transaction.getAmount(), transactionOfWallet.getAmount());
     }
 
     @Test
     void fetchTransactionsForWalletWithTwoTransaction() throws DebitWalletBalanceException {
-        int transactionAmount = 20;
+        int transactionAmount = 100;
         TransactionService transactionService = new TransactionService(transactionRepository);
-        Wallet wallet = prepareWalletWithTwoTransactions();
-        Wallet savedWallet = walletRepository.save(wallet);
+        Wallet savedWallet = saveWalletWithTwoTransactions();
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetchAll(savedWallet.getId(), limit).get(0);
 
         assertEquals(transactionAmount, transactionOfWallet.getAmount());
     }
@@ -65,7 +67,7 @@ class TransactionServiceTest {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Wallet savedWallet = walletRepository.save(wallet);
 
-        assertTrue(transactionService.fetch(savedWallet.getId()).isEmpty());
+        assertTrue(transactionService.fetchAll(savedWallet.getId(), limit).isEmpty());
     }
 
     @Test
@@ -73,7 +75,7 @@ class TransactionServiceTest {
         long invalidWalletId = 999L;
         TransactionService transactionService = new TransactionService(transactionRepository);
 
-        assertTrue(transactionService.fetch(invalidWalletId).isEmpty());
+        assertTrue(transactionService.fetchAll(invalidWalletId, limit).isEmpty());
     }
 
     @Test
@@ -81,7 +83,7 @@ class TransactionServiceTest {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet savedWallet = saveWalletWithSingleTransaction();
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetchAll(savedWallet.getId(), limit).get(0);
 
         assertEquals("Snacks", transactionOfWallet.getRemark());
     }
@@ -92,9 +94,32 @@ class TransactionServiceTest {
         final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
         Wallet savedWallet = saveWalletWithSingleTransaction();
 
-        Transaction transactionOfWallet = transactionService.fetch(savedWallet.getId()).get(0);
+        Transaction transactionOfWallet = transactionService.fetchAll(savedWallet.getId(), limit).get(0);
 
         assertTrue(transactionOfWallet.getCreatedAt().after(oneHourBefore));
+    }
+
+    @Test
+    void expects1TransactionWhenLimitIs1() throws DebitWalletBalanceException {
+        int limit = 1;
+        TransactionService transactionService = new TransactionService(transactionRepository);
+        Wallet savedWallet = saveWalletWithTwoTransactions();
+
+        List<Transaction> transactions = transactionService.fetchAll(savedWallet.getId(), limit);
+
+        assertEquals(limit, transactions.size());
+    }
+
+    @Test
+    void expectsLatestTransactionFromDBWhenLimitIs1() throws DebitWalletBalanceException {
+        int limit = 1;
+        int latestTransactionAmount = 100;
+        TransactionService transactionService = new TransactionService(transactionRepository);
+        Wallet savedWallet = saveWalletWithTwoTransactions();
+
+        List<Transaction> transactions = transactionService.fetchAll(savedWallet.getId(), limit);
+
+        assertEquals(latestTransactionAmount, transactions.get(0).getAmount());
     }
 
     private Wallet saveWalletWithSingleTransaction() throws DebitWalletBalanceException {
@@ -104,13 +129,13 @@ class TransactionServiceTest {
         return walletRepository.save(wallet);
     }
 
-    private Wallet prepareWalletWithTwoTransactions() throws DebitWalletBalanceException {
+    private Wallet saveWalletWithTwoTransactions() throws DebitWalletBalanceException {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
         Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT, "Snacks");
         wallet.process(firstTransaction);
         wallet.process(secondTransaction);
-        return wallet;
+        return walletRepository.save(wallet);
     }
 
     private Wallet walletWithNameJohnAnd1000Balance() {
