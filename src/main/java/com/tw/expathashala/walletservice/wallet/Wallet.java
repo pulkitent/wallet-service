@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.tw.expathashala.walletservice.wallet.DebitWalletBalanceException.AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE;
+import static com.tw.expathashala.walletservice.wallet.InvalidTransactionAmountException.AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE;
 
 // Represents money holder
 @Entity
@@ -49,7 +49,7 @@ public class Wallet {
     }
 
 
-    public void process(Transaction transaction) throws DebitWalletBalanceException {
+    public void process(Transaction transaction) throws InvalidTransactionAmountException {
         this.transaction.add(transaction);
         int amountToUpdate = transaction.amountToUpdate();
         updateBalance(amountToUpdate);
@@ -60,9 +60,9 @@ public class Wallet {
         return balance + amountToUpdate >= 0;
     }
 
-    private void updateBalance(int amountToUpdate) throws DebitWalletBalanceException {
+    private void updateBalance(int amountToUpdate) throws InvalidTransactionAmountException {
         if (!isDebitPossible(amountToUpdate)) {
-            throw new DebitWalletBalanceException(AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE);
+            throw new InvalidTransactionAmountException(AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE);
         }
         balance += amountToUpdate;
     }

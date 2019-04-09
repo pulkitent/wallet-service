@@ -17,7 +17,7 @@ public class Transaction {
     public static final String MESSAGE_NEGATIVE_AMOUNT = "Amount should be greater than zero";
     public static final String MAX_AMOUNT_ALLOWED_EXCEEDED_MESSAGE = "Amount should not exceed ₹ 10000";
     private static final int MAX_AMOUNT_ALLOWED = 10000;
-    private static final String CAN_NOT_BE_EMPTY = "remarks can not be empty";
+    private static final String REMARKS_CAN_NOT_BE_EMPTY = "remarks can not be empty";
 
 
     @Id
@@ -34,7 +34,7 @@ public class Transaction {
     private Date createdAt;
 
     @Size(min = 1, max = 50)
-    @NotEmpty(message = CAN_NOT_BE_EMPTY)
+    @NotEmpty(message = REMARKS_CAN_NOT_BE_EMPTY)
     private String remark;
 
     @ManyToOne(fetch = FetchType.LAZY)
