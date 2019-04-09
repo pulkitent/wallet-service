@@ -3,7 +3,6 @@ package com.tw.expathashala.walletservice.wallet;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionService;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -51,9 +50,10 @@ class WalletsController {
 
     @GetMapping("/{walletId}/transactions")
     @ResponseStatus(HttpStatus.OK)
-    List<Transaction> fetchTransactions(@PathVariable Long walletId) {
-        List<Transaction> transactions = transactionService.fetch(walletId);
-        if(transactions.size() == 0){
+    List<Transaction> fetchTransactions(@PathVariable Long walletId, @RequestParam(required = false,
+            defaultValue = Integer.MAX_VALUE + "") int limit) {
+        List<Transaction> transactions = transactionService.fetchAll(walletId, limit);
+        if(transactions.size() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return transactions;
