@@ -24,8 +24,9 @@ class WalletService {
         return walletRepository.findById(walletId);
     }
 
-    public Transaction addTransaction(Long walletId, Transaction transaction) {
-        Wallet wallet = findById(walletId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    public Transaction addTransaction(Long walletId, Transaction transaction) throws DebitException {
+        Wallet wallet = findById(walletId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         wallet.process(transaction);
         save(wallet);
         return transaction;

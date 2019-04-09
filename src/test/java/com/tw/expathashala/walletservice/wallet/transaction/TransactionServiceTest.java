@@ -4,6 +4,7 @@ import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionRepository;
 import com.tw.expathashala.walletservice.transaction.TransactionService;
 import com.tw.expathashala.walletservice.transaction.TransactionType;
+import com.tw.expathashala.walletservice.wallet.DebitException;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -34,7 +35,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchTransactionsForWalletWithNameJohn() {
+    void fetchTransactionsForWalletWithNameJohn() throws DebitException {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction transaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
@@ -47,7 +48,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchTransactionsForWalletWithTwoTransaction() {
+    void fetchTransactionsForWalletWithTwoTransaction() throws DebitException {
         int transactionAmount = 20;
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet wallet = prepareWalletWithTwoTransactions();
@@ -76,7 +77,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchTransactionsHavingRemarksWhenGivenValidWallet() {
+    void fetchTransactionsHavingRemarksWhenGivenValidWallet() throws DebitException {
         TransactionService transactionService = new TransactionService(transactionRepository);
         Wallet savedWallet = saveWalletWithSingleTransaction();
 
@@ -86,7 +87,7 @@ class TransactionServiceTest {
     }
 
     @Test
-    void fetchTransactionsHavingDateWhenGivenValidWallet() {
+    void fetchTransactionsHavingDateWhenGivenValidWallet() throws DebitException {
         TransactionService transactionService = new TransactionService(transactionRepository);
         final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
         Wallet savedWallet = saveWalletWithSingleTransaction();
@@ -96,14 +97,14 @@ class TransactionServiceTest {
         assertTrue(transactionOfWallet.getCreatedAt().after(oneHourBefore));
     }
 
-    private Wallet saveWalletWithSingleTransaction() {
+    private Wallet saveWalletWithSingleTransaction() throws DebitException {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
         wallet.process(firstTransaction);
         return walletRepository.save(wallet);
     }
 
-    private Wallet prepareWalletWithTwoTransactions() {
+    private Wallet prepareWalletWithTwoTransactions() throws DebitException {
         Wallet wallet = walletWithNameJohnAnd1000Balance();
         Transaction firstTransaction = new Transaction(20, TransactionType.DEBIT, "Snacks");
         Transaction secondTransaction = new Transaction(100, TransactionType.CREDIT, "Snacks");

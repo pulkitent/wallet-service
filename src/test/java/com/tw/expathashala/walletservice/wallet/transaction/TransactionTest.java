@@ -39,7 +39,7 @@ class TransactionTest {
 
     @Test
     void expectsAmountViolationWhenGivenNegativeTenAmount() {
-        Transaction invalidTransaction = new Transaction(-10, TransactionType.CREDIT,"Snacks");
+        Transaction invalidTransaction = new Transaction(-10, TransactionType.CREDIT, "Snacks");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(invalidTransaction);
 
@@ -48,7 +48,7 @@ class TransactionTest {
 
     @Test
     void expectsNoViolationWhenGivenPositiveTenAmount() {
-        Transaction validTransaction = new Transaction(10, TransactionType.CREDIT,"Snacks");
+        Transaction validTransaction = new Transaction(10, TransactionType.CREDIT, "Snacks");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(validTransaction);
 
@@ -57,7 +57,7 @@ class TransactionTest {
 
     @Test
     void expectsAmountViolationWhenAmountExceedsMaxLimit() {
-        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT,"Snacks");
+        Transaction invalidTransaction = new Transaction(11000, TransactionType.CREDIT, "Snacks");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(invalidTransaction);
 
@@ -66,7 +66,7 @@ class TransactionTest {
 
     @Test
     void expectsNoViolationWhenGiven100Amount() {
-        Transaction validTransaction = new Transaction(100, TransactionType.CREDIT,"Travel");
+        Transaction validTransaction = new Transaction(100, TransactionType.CREDIT, "Travel");
 
         Set<ConstraintViolation<Transaction>> violations = validator.validate(validTransaction);
 
@@ -74,20 +74,40 @@ class TransactionTest {
     }
 
     @Test
-    void expectsTransactionToHaveRemarkWhenCreated(){
-        Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Travel");
+    void expectsTransactionToHaveRemarkWhenCreated() {
+        Transaction transaction = new Transaction(100, TransactionType.CREDIT, "Travel");
 
-        assertEquals("Travel",transaction.getRemark());
+        assertEquals("Travel", transaction.getRemark());
     }
 
     @Test
-    void expectsTransactionToHaveDateBeforePersistence(){
-        Transaction transaction = new Transaction(100,TransactionType.CREDIT,"Snacks");
+    void expectsTransactionToHaveDateBeforePersistence() {
+        Transaction transaction = new Transaction(100, TransactionType.CREDIT, "Snacks");
         final Date oneHourBefore = Date.from(Instant.now().minus(Duration.ofHours(1)));
 
         transaction.createdAtNow();
 
         assertTrue(transaction.getCreatedAt().after(oneHourBefore));
+    }
+
+    @Test
+    void expectsRemarkViolationWhenRemarkIsEmpty() {
+        Transaction invalidTransaction = new Transaction(100, TransactionType.CREDIT, "");
+
+        Set<ConstraintViolation<Transaction>> violations = validator.validate(invalidTransaction);
+
+        assertFalse(violations.isEmpty());
+    }
+
+    @Test
+    void expectsRemarkViolationWhenRemarkIsMoreThanFiftyCharacters() {
+        String fiftyCharacterRemark =
+                "qazwsxedcrfvtgbyhnujmiklopqazwsxedcrfvtgbyhnujmkilop";
+        Transaction invalidTransaction = new Transaction(100, TransactionType.CREDIT, fiftyCharacterRemark);
+
+        Set<ConstraintViolation<Transaction>> violations = validator.validate(invalidTransaction);
+
+        assertFalse(violations.isEmpty());
     }
 }
 

@@ -14,6 +14,8 @@ import java.util.List;
 @ApiModel(description = "An entity to describe wallet")
 public class Wallet {
 
+    static final String DEBIT_AMOUNT_LESS_THAN_BALANCE = "Wallet Balance is less than debit amount";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @ApiModelProperty(notes = "Database generated id for wallet", required = true)
@@ -47,21 +49,20 @@ public class Wallet {
     }
 
 
-    public void process(Transaction transaction) {
+    public void process(Transaction transaction) throws DebitException {
         this.transaction.add(transaction);
         int amountToUpdate = transaction.amountToUpdate();
         updateBalance(amountToUpdate);
         transaction.setWallet(this);
     }
 
-    private Boolean isDebitPossible(int amountToUpdate) {
+    private Boolean isDebitNotPossible(int amountToUpdate) {
         return amountToUpdate < 0 && balance < Math.abs(amountToUpdate);
     }
 
-    private void updateBalance(int amountToUpdate) {
-        String debitNotPossible = "Wallet Balance is less than debit amount";
-        if (isDebitPossible(amountToUpdate)) {
-            throw new RuntimeException(debitNotPossible);
+    private void updateBalance(int amountToUpdate) throws DebitException {
+        if (isDebitNotPossible(amountToUpdate)) {
+            throw new DebitException(DEBIT_AMOUNT_LESS_THAN_BALANCE);
         }
         balance += amountToUpdate;
     }

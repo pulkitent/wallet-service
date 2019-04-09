@@ -3,7 +3,6 @@ package com.tw.expathashala.walletservice.wallet;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionService;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +14,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.tw.expathashala.walletservice.wallet.Wallet.DEBIT_AMOUNT_LESS_THAN_BALANCE;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -46,14 +47,18 @@ class WalletsController {
     @PostMapping("/{id}/transactions")
     @ResponseStatus(HttpStatus.CREATED)
     Transaction createTransaction(@PathVariable Long id, @Valid @RequestBody Transaction transaction) {
-        return walletService.addTransaction(id, transaction);
+        try {
+            return walletService.addTransaction(id, transaction);
+        } catch (DebitException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,  DEBIT_AMOUNT_LESS_THAN_BALANCE);
+        }
     }
 
     @GetMapping("/{walletId}/transactions")
     @ResponseStatus(HttpStatus.OK)
     List<Transaction> fetchTransactions(@PathVariable Long walletId) {
         List<Transaction> transactions = transactionService.fetch(walletId);
-        if(transactions.size() == 0){
+        if (transactions.size() == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return transactions;
