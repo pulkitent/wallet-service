@@ -5,7 +5,9 @@ import com.tw.expathashala.walletservice.wallet.Wallet;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 //Represents exchange of money
@@ -15,6 +17,8 @@ public class Transaction {
     public static final String MESSAGE_NEGATIVE_AMOUNT = "Amount should be greater than zero";
     public static final String MAX_AMOUNT_ALLOWED_EXCEEDED_MESSAGE = "Amount should not exceed ₹ 10000";
     private static final int MAX_AMOUNT_ALLOWED = 10000;
+    private static final String REMARKS_CAN_NOT_BE_EMPTY = "remarks can not be empty";
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,6 +33,8 @@ public class Transaction {
 
     private Date createdAt;
 
+    @Size(min = 1, max = 50)
+    @NotEmpty(message = REMARKS_CAN_NOT_BE_EMPTY)
     private String remark;
 
     @ManyToOne(fetch = FetchType.LAZY)

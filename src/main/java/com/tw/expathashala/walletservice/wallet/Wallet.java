@@ -9,6 +9,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.tw.expathashala.walletservice.wallet.InvalidTransactionAmountException.AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE;
+
 // Represents money holder
 @Entity
 @ApiModel(description = "An entity to describe wallet")
@@ -21,7 +23,7 @@ public class Wallet {
     private String name;
     private int balance;
 
-    @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "wallet", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     public List<Transaction> transaction;
 
@@ -47,14 +49,21 @@ public class Wallet {
     }
 
 
-    public void process(Transaction transaction) {
+    public void process(Transaction transaction) throws InvalidTransactionAmountException {
         this.transaction.add(transaction);
         int amountToUpdate = transaction.amountToUpdate();
         updateBalance(amountToUpdate);
         transaction.setWallet(this);
     }
 
-    private void updateBalance(int amountToUpdate) {
-        balance = balance + amountToUpdate;
+    private Boolean isDebitPossible(int amountToUpdate) {
+        return balance + amountToUpdate >= 0;
+    }
+
+    private void updateBalance(int amountToUpdate) throws InvalidTransactionAmountException {
+        if (!isDebitPossible(amountToUpdate)) {
+            throw new InvalidTransactionAmountException(AMOUNT_CAN_NOT_EXCEED_WALLET_BALANCE);
+        }
+        balance += amountToUpdate;
     }
 }

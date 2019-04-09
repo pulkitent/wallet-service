@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tw.expathashala.walletservice.transaction.Transaction;
 import com.tw.expathashala.walletservice.transaction.TransactionService;
 import com.tw.expathashala.walletservice.transaction.TransactionType;
+import com.tw.expathashala.walletservice.wallet.InvalidTransactionAmountException;
 import com.tw.expathashala.walletservice.wallet.Wallet;
 import com.tw.expathashala.walletservice.wallet.WalletService;
 import org.junit.jupiter.api.Test;
@@ -113,8 +114,8 @@ class WalletsControllerTest {
     }
 
     @Test
-    void shouldBeAbleToAddTransactionForAGivenWallet() throws Exception {
-        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT, "Snacks");
+    void shouldBeAbleToAddTransactionForAGivenWallet() throws Exception, InvalidTransactionAmountException {
+        Transaction firstTransaction = new Transaction(100, TransactionType.DEBIT,"Snacks");
         long wallet_id = 999L;
         ObjectMapper objectMapper = new ObjectMapper();
 
